@@ -1,17 +1,29 @@
-import 'package:flutter/material.dart';
+import 'package:Mr.musik/presentation/splash.dart';
 import 'package:hive/hive.dart';
-import '../../models/model.dart';
+import '../../domain/model.dart';
 
 
-ValueNotifier<List<Songs>> recentList = ValueNotifier([]);
+// ValueNotifier<List<Songs>> recentList = ValueNotifier([]);
 
-recentadd(Songs song) async {
+//----------------Adding song to recentlist----------------
+Future<List<Songs>> recentadd(
+    {required int id, required List<Songs> recentList}) async {
+  late Songs song;
+  for (Songs element in allSongs) {
+    if (element.id == id) {
+      song = element;
+      break;
+    }
+  }
   Box<int> recentDb = await Hive.openBox('recent');
+
   List<int> temp = [];
   temp.addAll(recentDb.values);
-  if (recentList.value.contains(song)) {
-    recentList.value.remove(song);
-    recentList.value.insert(0, song);
+  
+  if (recentList.contains(song)) {
+    //--------------If already song existing in the recent list removing the existing and adding it to the 0th position--------------
+    recentList.remove(song);
+    recentList.insert(0, song);
     for (int i = 0; i < temp.length; i++) {
       if (song.id == temp[i]) {
         recentDb.deleteAt(i);
@@ -19,12 +31,14 @@ recentadd(Songs song) async {
       }
     }
   } else {
-    recentList.value.insert(0, song);
+    //---------------If song not in the recentlist adding it to the 0th position------------------
+    recentList.insert(0, song);
     recentDb.add(song.id);
   }
-  if (recentList.value.length > 10) {
-    recentList.value = recentList.value.sublist(0, 10);
+  //---------------------------Only taking 10 from the list-------------------
+  if (recentList.length > 10) {
+    recentList = recentList.sublist(0, 10);
     recentDb.deleteAt(0);
   }
-  
+  return recentList;
 }

@@ -1,20 +1,54 @@
-import 'package:flutter/material.dart';
+import 'package:Mr.musik/presentation/splash.dart';
 import 'package:hive/hive.dart';
-import '../../models/model.dart';
+import '../../domain/model.dart';
 
 
 
-ValueNotifier<List<Songs>> mostPlayedList = ValueNotifier([]);
+//-----------------Adding Song to mostplayed database-------------------
+Future<List<Songs>>mostplayedaddtodb(
+    {required int id, required List<Songs> mostPlayedList}) async {
+  Box<int> mostplayedDb = await Hive.openBox('mostplayed');
+  int count = mostplayedDb.get(id)!;
+  mostplayedDb.put(id, count + 1);
+  return await mostplayedaddtolist(mostPlayedList);
+}
 
-
-mostplayedadd(Songs song) async {
-  final Box<int> MostPlayedDB = await Hive.openBox('MostPLayed');
-  int count = (MostPlayedDB.get(song.id) ?? 0) + 1;
-  MostPlayedDB.put(song.id, count);
-  if (count > 4 && !mostPlayedList.value.contains(song)) {
-    mostPlayedList.value.add(song);
+//-----------------Clearing all the songs in the mostplayed list and adding new 10 mostplayed song to the list-----------------
+Future<List<Songs>> mostplayedaddtolist(List<Songs> mostPlayedList) async {
+  Box<int> mostplayedDb = await Hive.openBox('mostplayed');
+  //------------clearing the current mostplayed list-------------
+  mostPlayedList.clear();
+  List<List<int>> mostplayedTemp = [];
+  //-----------Adding the Database value into a 2D array for sorting -------------
+  for (Songs song in allSongs) {
+    int count = mostplayedDb.get(song.id)!;
+    mostplayedTemp.add([song.id, count]);
   }
-  if (mostPlayedList.value.length > 10) {
-    mostPlayedList.value = mostPlayedList.value.sublist(0, 10);
+
+  //--------------Sorting the songs according to the count------------------
+  for (int i = 0; i < mostplayedTemp.length - 1; i++) {
+    for (int j = i + 1; j < mostplayedTemp.length; j++) {
+      if (mostplayedTemp[i][1] < mostplayedTemp[j][1]) {
+        List<int> temp = mostplayedTemp[i];
+        mostplayedTemp[i] = mostplayedTemp[j];
+        mostplayedTemp[j] = temp;
+      }
+    }
   }
+
+  //-----------Taking the mostplayed 10 songs---------
+  List<List<int>> temp = [];
+  for (int i = 0; i < mostplayedTemp.length && i < 10; i++) {
+    temp.add(mostplayedTemp[i]);
+  }
+  mostplayedTemp = temp;
+  //---------------From that only songs played more than 3 times are taken---------------
+  for (List<int> element in mostplayedTemp) {
+    for (Songs song in allSongs) {
+      if (element[0] == song.id && element[1] > 3) {
+        mostPlayedList.add(song);
+      }
+    }
+  }
+  return mostPlayedList;
 }

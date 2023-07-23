@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'favModel.dart';
+part of 'fav_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator

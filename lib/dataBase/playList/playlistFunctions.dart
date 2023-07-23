@@ -1,78 +1,70 @@
 import 'package:hive/hive.dart';
 import 'package:Mr.musik/dataBase/playList/EachPlayList.dart';
 import 'package:Mr.musik/dataBase/playList/playlistModel.dart';
-import 'package:Mr.musik/screens/PlayListScreens/playlistScreen.dart';
-import '../../models/model.dart';
+import '../../domain/model.dart';
 
-
-Future addPlayList(name) async {
-  playListNotifier.value.add(EachPlaylist(name: name));
-  Box<PlaylistClass> playlistdb = await Hive.openBox('PlayList');
-  playlistdb.add(PlaylistClass(playlistName: name));
-  playlistdb.close();
-  playListNotifier.notifyListeners();
+//------------------------------create a playlist---------------------------------
+Future<List<EachPlaylist>> playlistcreating(
+    {required String playlistName,
+    required List<EachPlaylist> playlists}) async {
+  playlists.add(EachPlaylist(name: playlistName));
+  Box<PlaylistClass> playlistdb = await Hive.openBox('playlist');
+  playlistdb.put(playlistName, PlaylistClass(playlistName: playlistName));
+  return playlists;
 }
 
-
-Future playlistdelete(int index) async {
-  String playlistname = playListNotifier.value[index].name;
-  Box<PlaylistClass> playlistdb = await Hive.openBox('PlayList');
-  for (PlaylistClass element in playlistdb.values) {
-    if (element.playlistName == playlistname) {
-      var key = element.key;
-      playlistdb.delete(key);
-      break;
-    }
-  }
-  playListNotifier.value.removeAt(index);
-  playListNotifier.notifyListeners();
+//------------------------------playlist deleting---------------------------------
+Future<List<EachPlaylist>> playlistdelete(
+    {required List<EachPlaylist> playlist, required int index}) async {
+  Box<PlaylistClass> playlistdb = await Hive.openBox('playlist');
+  playlistdb.delete(playlist[index].name);
+  playlist.removeAt(index);
+  return playlist;
 }
 
-Future playlistAddDB(Songs addingSong, String playlistName) async {
-  Box<PlaylistClass> playlistdb = await Hive.openBox('PlayList');
-
-  for (PlaylistClass element in playlistdb.values) {
-    if (element.playlistName == playlistName) {
-      var key = element.key;
-      PlaylistClass ubdatePlaylist = PlaylistClass(playlistName: playlistName);
-      ubdatePlaylist.ListSongs.addAll(element.ListSongs);
-      ubdatePlaylist.ListSongs.add(addingSong.id);
-      playlistdb.put(key, ubdatePlaylist);
-      break;
-    }
-  }
-  playListNotifier.notifyListeners();
+//------------------------------playlist renaming---------------------------------
+Future<List<EachPlaylist>> playlistrename(
+    {required int index,
+    required List<EachPlaylist> playlist,
+    required String newname}) async {
+  String key = playlist[index].name;
+  Box<PlaylistClass> playlistdb = await Hive.openBox('playlist');
+  PlaylistClass updating = playlistdb.get(key)!;
+  updating.playlistName = newname;
+  playlistdb.put(key, updating);
+  playlist[index].name = newname;
+  return playlist;
 }
 
-Future playlistRemoveDB(Songs removingsong,String playlistName) async{
-Box<PlaylistClass> playlistdb = await Hive.openBox('PlayList');
-  for (PlaylistClass element in playlistdb.values) {
-    if (element.playlistName == playlistName) {
-      var key = element.key;
-      PlaylistClass updateplaylist = PlaylistClass(playlistName: playlistName);
-      for (int item in element.ListSongs) {
-        if (item == removingsong.id) {
-          continue;
-        }
-        updateplaylist.ListSongs.add(item);
-      }
-      playlistdb.put(key, updateplaylist);
-      break;
-    }
-  }
-  playListNotifier.notifyListeners();
+//-----------------------------Songs adding to playlist---------------------------
+Future<List<EachPlaylist>> songAddToPlaylist(
+    {required Songs addingsong,
+    required List<EachPlaylist> playlist,
+    required int index}) async {
+  Box<PlaylistClass> playlistdb = await Hive.openBox('playlist');
+  String key = playlist[index].name;
+  playlist[index].container.add(addingsong);
+  PlaylistClass updateingPlaylist = playlistdb.get(key)!;
+  updateingPlaylist.ListSongs.add(addingsong.id);
+  playlistdb.put(key, updateingPlaylist);
+  return playlist;
 }
 
-Future playlistrename(int index, String newname) async {
-  String playlistname = playListNotifier.value[index].name;
-  Box<PlaylistClass> playlistdb = await Hive.openBox('PlayList');
-  for (PlaylistClass element in playlistdb.values) {
-    if (element.playlistName == playlistname) {
-      var key = element.key;
-      element.playlistName = newname;
-      playlistdb.put(key, element);
+//-----------------------------Song remove from playlist--------------------------
+Future<List<EachPlaylist>> songRemoveFromPlaylist(
+    {required Songs removingsong,
+    required List<EachPlaylist> playlist,
+    required int index}) async {
+  Box<PlaylistClass> playlistdb = await Hive.openBox('playlist');
+  String key = playlist[index].name;
+  PlaylistClass updateplaylist = playlistdb.get(key)!;
+  int itemidx = 0;
+  for (int i = 0; i < updateplaylist.ListSongs.length; i++) {
+    if (updateplaylist.ListSongs[i] == removingsong.id) {
+      itemidx = i;
     }
   }
-  playListNotifier.value[index].name = newname;
-  playListNotifier.notifyListeners();
+  updateplaylist.ListSongs.removeAt(itemidx);
+  playlistdb.put(key, updateplaylist);
+  return playlist;
 }

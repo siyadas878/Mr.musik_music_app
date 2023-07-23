@@ -1,4 +1,4 @@
-import '../../models/model.dart';
+import '../../domain/model.dart';
 
 class EachPlaylist {
   
