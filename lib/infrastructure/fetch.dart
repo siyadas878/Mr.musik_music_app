@@ -38,10 +38,6 @@ import '../presentation/splash.dart';
         }
       }
     }
-    // await favfetch();
-    // await recentfetch();
-    // await playlistfetch();
-    // await mostplayedfetch();
   }
 
   
@@ -103,7 +99,6 @@ Future<List<EachPlaylist>> playlistfetch() async {
 }
    
 
-//--------------Fetching mostplayed songs from the database-------------
 
 Future<List<Songs>> mostplayedfetch() async {
   Box<int> mostplayedDb = await Hive.openBox('mostplayed');

@@ -2,55 +2,35 @@ part of 'play_list_bloc.dart';
 
 class PlayListEvent {}
 
-class PlaylistE extends PlayListEvent {
-  int? playlistIndex;
-  String? newname;
-  late bool iscreateing;
-  late bool isrenaming;
-  late bool isdeleting;
-
-  PlaylistE.createnew({required this.newname}) {
-    iscreateing = true;
-    isdeleting = false;
-    isrenaming = false;
-  }
-
-  PlaylistE.isrenaming({
-    required this.newname,
-    required this.playlistIndex,
-  }) {
-    iscreateing = false;
-    isdeleting = false;
-    isrenaming = true;
-  }
-
-  PlaylistE.isdeleting({required this.playlistIndex}) {
-    iscreateing = false;
-    isdeleting = true;
-    isrenaming = false;
-  }
+class PlaylistAdd extends PlayListEvent {
+  int playlistIndex;
+  String newname;
+  PlaylistAdd({required this.playlistIndex,required this.newname});
 }
 
-class PlaylistI extends PlayListEvent {
+class PlaylistDelete extends PlayListEvent {
+  int playlistIndex;
+  String newname;
+  PlaylistDelete({required this.playlistIndex,required this.newname});
+}
+
+class PlaylistRename extends PlayListEvent {
+  int playlistIndex;
+  String newname;
+  PlaylistRename({required this.playlistIndex,required this.newname});
+}
+
+
+class PlaylistSongAdd extends PlayListEvent {
   Songs song;
   int playlistIndex;
-  late bool isadding;
-  late bool isremoving;
+PlaylistSongAdd({required this.song,required this.playlistIndex});
+}
 
-  PlaylistI.songAdding({
-    required this.song,
-    required this.playlistIndex,
-  }) {
-    isadding = true;
-    isremoving = false;
-  }
-   PlaylistI.songRemoving({
-    required this.song,
-    required this.playlistIndex,
-  }) {
-    isadding = false;
-    isremoving = true;
-  }
+class PlaylistRemoveSong extends PlayListEvent {
+  Songs song;
+  int playlistIndex;
+PlaylistRemoveSong({required this.song,required this.playlistIndex});
 }
 
 class PlaylistFetch extends PlayListEvent{

@@ -3,7 +3,6 @@ import 'package:Mr.musik/dataBase/playList/EachPlayList.dart';
 import 'package:Mr.musik/dataBase/playList/playlistModel.dart';
 import '../../domain/model.dart';
 
-//------------------------------create a playlist---------------------------------
 Future<List<EachPlaylist>> playlistcreating(
     {required String playlistName,
     required List<EachPlaylist> playlists}) async {
@@ -13,7 +12,6 @@ Future<List<EachPlaylist>> playlistcreating(
   return playlists;
 }
 
-//------------------------------playlist deleting---------------------------------
 Future<List<EachPlaylist>> playlistdelete(
     {required List<EachPlaylist> playlist, required int index}) async {
   Box<PlaylistClass> playlistdb = await Hive.openBox('playlist');
@@ -22,7 +20,6 @@ Future<List<EachPlaylist>> playlistdelete(
   return playlist;
 }
 
-//------------------------------playlist renaming---------------------------------
 Future<List<EachPlaylist>> playlistrename(
     {required int index,
     required List<EachPlaylist> playlist,
@@ -36,7 +33,6 @@ Future<List<EachPlaylist>> playlistrename(
   return playlist;
 }
 
-//-----------------------------Songs adding to playlist---------------------------
 Future<List<EachPlaylist>> songAddToPlaylist(
     {required Songs addingsong,
     required List<EachPlaylist> playlist,
@@ -50,7 +46,6 @@ Future<List<EachPlaylist>> songAddToPlaylist(
   return playlist;
 }
 
-//-----------------------------Song remove from playlist--------------------------
 Future<List<EachPlaylist>> songRemoveFromPlaylist(
     {required Songs removingsong,
     required List<EachPlaylist> playlist,

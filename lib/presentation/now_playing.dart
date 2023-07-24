@@ -129,7 +129,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
           ),
           const Divider(color: Color(0xFFF0ECC2)),
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.05,
+            height: MediaQuery.of(context).size.height * 0.08,
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -139,7 +139,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
               ),
               SizedBox(
-                height: 30,
+                height: MediaQuery.of(context).size.height * 0.04,
               ),
               // ElevatedButton(
               //     style: ElevatedButton.styleFrom(

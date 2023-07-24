@@ -1,3 +1,4 @@
+import 'package:Mr.musik/presentation/now_playing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -106,8 +107,7 @@ class PlayListAdding extends StatelessWidget {
                                     onPressed: () async {
                                       if (formKey.currentState!.validate()) {
                                         BlocProvider.of<PlayListBloc>(context)
-                                            .add(PlaylistE.createnew(
-                                                newname: NameOfPlayList.text));
+                                            .add(PlaylistAdd(playlistIndex: index, newname: NameOfPlayList.text));
                                         //  setState(() {
                                         //    addPlayList(NameOfPlayList.text);
                                         //  });
@@ -142,10 +142,8 @@ class PlayListAdding extends StatelessWidget {
                             onTap: () async {
                               if (!playlistState.playlist[index].container
                                   .contains(addingsong)) {
-                                BlocProvider.of<PlayListBloc>(context).add(
-                                    PlaylistI.songAdding(
-                                        song: addingsong,
-                                        playlistIndex: index));
+                                BlocProvider.of<PlayListBloc>(context).add(PlaylistSongAdd(
+                                  song: addingsong, playlistIndex: index));
                                 SnackBarShowForPlaylistAdd(context);
                                 playlistState.playlist[index].container
                                     .add(addingsong);

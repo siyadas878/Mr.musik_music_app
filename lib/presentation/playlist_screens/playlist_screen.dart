@@ -1,4 +1,5 @@
 import 'package:Mr.musik/applications/playlist_bloc/play_list_bloc.dart';
+import 'package:Mr.musik/presentation/now_playing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -169,9 +170,8 @@ class PlayListScreen extends StatelessWidget {
                                                 onPressed: () {
                                                   BlocProvider.of<PlayListBloc>(
                                                           context)
-                                                      .add(PlaylistE.isdeleting(
-                                                          playlistIndex:
-                                                              index));
+                                                      .add(PlaylistDelete(playlistIndex: index, 
+                                                      newname: rename.text));
                                                   Navigator.pop(context);
                                                 },
                                               ),
@@ -255,13 +255,8 @@ class PlayListScreen extends StatelessWidget {
                                                       BlocProvider.of<
                                                                   PlayListBloc>(
                                                               context)
-                                                          .add(PlaylistE
-                                                              .isrenaming(
-                                                                  newname:
-                                                                      rename
-                                                                          .text,
-                                                                  playlistIndex:
-                                                                      index));
+                                                          .add(PlaylistRename(playlistIndex: index, 
+                                                          newname: rename.text));
                                                       // setState(() {
                                                       //   playlistrename(
                                                       //       index,
@@ -364,8 +359,7 @@ class PlayListScreen extends StatelessWidget {
                                 onPressed: () async {
                                   if (formKey.currentState!.validate()) {
                                     BlocProvider.of<PlayListBloc>(context).add(
-                                        PlaylistE.createnew(
-                                            newname: NameOfPlayList.text));
+                                        PlaylistAdd(playlistIndex: index, newname: NameOfPlayList.text));
                                     Navigator.of(context).pop();
                                     NameOfPlayList.clear();
                                     // setState(() {

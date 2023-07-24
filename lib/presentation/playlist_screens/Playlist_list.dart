@@ -18,7 +18,6 @@ class PlayListListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
         body: Container(
       decoration: const BoxDecoration(
@@ -106,11 +105,6 @@ class PlayListListScreen extends StatelessWidget {
                             enableDrag: false,
                             context: context,
                             builder: (context) => MiniPLayer());
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (context) => NowPlayingScreen(song: value[idx].container[index]),
-                        //     ));
                       },
                       child: ListTile(
                         leading: QueryArtworkWidget(
@@ -154,8 +148,9 @@ class PlayListListScreen extends StatelessWidget {
                               itemBuilder: (context) => [
                                 PopupMenuItem(
                                     value: 0,
-                                    child: favstate.favorite
-                                            .contains(playlistState.playlist[idx].container[index])
+                                    child: favstate.favorite.contains(
+                                            playlistState
+                                                .playlist[idx].container[index])
                                         ? Text(
                                             'Remove From Favour',
                                             style: TextStyle(
@@ -179,8 +174,8 @@ class PlayListListScreen extends StatelessWidget {
                               ],
                               onSelected: (value) async {
                                 if (value == 0) {
-                                  if (favstate.favorite
-                                      .contains(playlistState.playlist[idx].container[index])) {
+                                  if (favstate.favorite.contains(playlistState
+                                      .playlist[idx].container[index])) {
                                     BlocProvider.of<FavoriteBloc>(context).add(
                                         RemoveFromeFav(playlistState
                                             .playlist[idx]
@@ -194,12 +189,12 @@ class PlayListListScreen extends StatelessWidget {
                                     SnackBarShowForFavorite(context);
                                   }
                                 } else if (value == 1) {
-                                  BlocProvider.of<PlayListBloc>(context).add(
-                                      PlaylistI.songRemoving(
-                                          song: playlistState
-                                              .playlist[idx].container[index],
-                                          playlistIndex: index));
-                                  playlistState.playlist[idx].container.remove(playlistState.playlist[idx].container[index]);
+                                    BlocProvider.of<PlayListBloc>(context).add(PlaylistRemoveSong(
+                                    song: playlistState.playlist[idx]
+                                            .container[index], playlistIndex: idx));
+                                playlistState.playlist[idx].container
+                                    .remove(playlistState.playlist[idx]
+                                            .container[index]);
                                 }
                               },
                             );
@@ -237,32 +232,32 @@ class PlayListListScreen extends StatelessWidget {
                         color: Color(0xFFF0ECC2),
                         child: ListTile(
                           trailing: IconButton(
-                              onPressed: () {
-                                if (!playlistState.playlist[idx].container
-                                    .contains(allSongs[index])) {
-                                  BlocProvider.of<PlayListBloc>(context).add(
-                                      PlaylistI.songAdding(
-                                          song: allSongs[index],
-                                          playlistIndex: index));
-                                  // playlistAddDB(allSongs[index],
-                                  //     currenPlaylistindex.name);
-                                  playlistState.playlist[idx].container
-                                      .add(allSongs[index]);
-                                } else {
-                                  BlocProvider.of<PlayListBloc>(context).add(
-                                      PlaylistI.songRemoving(
-                                          song: allSongs[index],
-                                          playlistIndex: index));
-                                  // playlistRemoveDB(allSongs[index],
-                                  //     currenPlaylistindex.name);
-                                  playlistState.playlist[idx].container
-                                      .remove(allSongs[index]);
-                                }
-                              },
-                              icon: playlistState.playlist[idx].container
-                                      .contains(allSongs[index])
-                                  ? Icon(Icons.remove)
-                                  : Icon(Icons.add)),
+                            onPressed: () {
+                              var currentPlaylist = playlistState.playlist[idx];
+
+                              bool songAlreadyInPlaylist = currentPlaylist
+                                  .container
+                                  .contains(allSongs[index]);
+
+                              var playlistBloc =
+                                  BlocProvider.of<PlayListBloc>(context);
+
+                              if (!songAlreadyInPlaylist) {
+                                playlistBloc.add(PlaylistSongAdd(
+                                    song: allSongs[index], playlistIndex: idx));
+                                currentPlaylist.container.add(allSongs[index]);
+                              } else {
+                                playlistBloc.add(PlaylistRemoveSong(
+                                    song: allSongs[index], playlistIndex: idx));
+                                currentPlaylist.container
+                                    .remove(allSongs[index]);
+                              }
+                            },
+                            icon: playlistState.playlist[idx].container
+                                    .contains(allSongs[index])
+                                ? Icon(Icons.remove)
+                                : Icon(Icons.add),
+                          ),
                           leading: QueryArtworkWidget(
                             size: 3000,
                             quality: 100,
